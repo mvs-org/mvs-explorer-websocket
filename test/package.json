@@ -1,0 +1,14 @@
+{
+  "name": "mvs-explorer-consumer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "tickers.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autobahn": "^17.5.2"
+  }
+}

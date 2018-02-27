@@ -1,0 +1,30 @@
+version: '2'
+services:
+    router:
+        build: router
+        ports:
+          - "8080:8080"
+    provider_transacitons:
+        build: provider
+        environment:
+          - PROVIDE_TASK=TRANSACTIONS
+          - TRANSACTION_TIMER=2000
+          - ROUTER_URL=ws://router:8080/ws
+          - REALM=realm1
+          - MONGO_HOST=10.130.18.11
+          - WS_USER=transactionprovider
+          - WS_SECRET=TXSECRET
+        links:
+          - router
+    provider_blocks:
+        build: provider
+        environment:
+          - PROVIDE_TASK=BLOCKS
+          - BLOCK_TIMER=2000
+          - ROUTER_URL=ws://router:8080/ws
+          - REALM=realm1
+          - MONGO_HOST=10.130.18.11
+          - WS_USER=blockprovider
+          - WS_SECRET=BLOCKSECRET
+        links:
+          - router

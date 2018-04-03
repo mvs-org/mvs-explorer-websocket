@@ -9,6 +9,7 @@
   "author": "Sven Mutzl",
   "license": "ISC",
   "dependencies": {
+    "ws": "^2.2.1",
     "autobahn": "^17.5.2",
     "mongodb": "^2.2.33",
     "requestify": "^0.2.5"

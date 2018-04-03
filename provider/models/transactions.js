@@ -12,7 +12,7 @@ module.exports = () => {
     return {
         init: ()=>{
             listLastBlocks(10).then((txs)=>{
-                this.last_known=txs[0].id;
+                this.last_known=txs[0].height;
                 this.txs=txs;
             });
         },
@@ -22,7 +22,7 @@ module.exports = () => {
 		    .then((txs)=>{
 			      this.txs=txs.concat(this.txs);
             if(txs[0]!==undefined)
-                this.last_known=txs[0].id;
+                this.last_known=txs[0].height;
             this.txs=this.txs.slice(0,10);
 			      resolve(txs);
 		    });
@@ -38,7 +38,7 @@ function listLastBlocks(number) {
     return new Promise((resolve,reject)=>{
         mongo.connect()
             .then((db)=>{
-                db.collection('tx').find().sort({'id': -1}).limit(number).toArray((err,docs)=>{
+                db.collection('tx').find().sort({'height': -1}).limit(number).toArray((err,docs)=>{
                     if(err) throw Error(err.message);
                     else
                         resolve(docs);
@@ -50,7 +50,7 @@ function listNewBlocks(last_known) {
     return new Promise((resolve,reject)=>{
         mongo.connect()
             .then((db)=>{
-                db.collection('tx').find({'id': {'$gt': last_known}}).sort({'id': -1}).toArray((err,docs)=>{
+                db.collection('tx').find({'height': {'$gt': last_known}}).sort({'height': -1}).toArray((err,docs)=>{
             if(err) throw Error(err.message);
             else
                 resolve(docs);

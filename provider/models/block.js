@@ -39,7 +39,7 @@ function listLastBlocks(number) {
     return new Promise((resolve,reject)=>{
         mongo.connect()
             .then((db)=>{
-                db.collection('block').find().sort({'number': -1}).limit(number).toArray((err,docs)=>{
+                db.collection('block').find({orphan: 0}).sort({'number': -1}).limit(number).toArray((err,docs)=>{
                     if(err) throw Error(err.message);
                     else
                         resolve(docs);
@@ -51,7 +51,7 @@ function listNewBlocks(last_known, number) {
     return new Promise((resolve,reject)=>{
         mongo.connect()
             .then((db)=>{
-                db.collection('block').find({'number': {'$gt': last_known}}).sort({'number': -1}).limit(number).toArray((err,docs)=>{
+                db.collection('block').find({'number': {'$gt': last_known}, 'orphan': 0}).sort({'number': -1}).limit(number).toArray((err,docs)=>{
             if(err) throw Error(err.message);
             else
                 resolve(docs);

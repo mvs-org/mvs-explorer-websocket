@@ -3,33 +3,35 @@
 //Set up database
 var mongo = require('../libraries/mongo.js');
 var config = require('../config/config.js');
+var mongodb = require('mongodb');
+var ObjectId = mongodb.ObjectID;
 
 
 
 module.exports = () => {
     this.txs = [];
-	  this.last_known=0;
+	  this.last_id= "0";
     return {
         init: ()=>{
             listLastBlocks(10).then((txs)=>{
-                this.last_known=txs[0].height;
+                this.last_id=txs[0]._id;
                 this.txs=txs;
             });
         },
         update: () => {
             return new Promise((resolve, reject) => {
-		    listNewBlocks(this.last_known)
+		    listNewBlocks(this.last_id)
 		    .then((txs)=>{
 			      this.txs=txs.concat(this.txs);
             if(txs[0]!==undefined)
-                this.last_known=txs[0].height;
+                this.last_id=txs[0]._id;
             this.txs=this.txs.slice(0,10);
 			      resolve(txs);
 		    });
             });
         },
         get: () => {
-            return this.txs
+            return this.txs;
         }
     };
 };
@@ -46,11 +48,11 @@ function listLastBlocks(number) {
             });
     });
 }
-function listNewBlocks(last_known) {
+function listNewBlocks(last_id) {
     return new Promise((resolve,reject)=>{
         mongo.connect()
             .then((db)=>{
-                db.collection('tx').find({'height': {'$gt': last_known}}).sort({'height': -1}).toArray((err,docs)=>{
+                db.collection('tx').find({'_id': {'$gt': new ObjectId(last_id)}}).sort({'_id': -1}).toArray((err,docs)=>{
             if(err) throw Error(err.message);
             else
                 resolve(docs);
